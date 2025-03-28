@@ -1,66 +1,156 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Instalação
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Antes de instalar o Laravel no Debian, é necessário garantir que todas as dependências estejam instaladas. O Laravel depende do PHP e de algumas extensões, além de um banco de dados como MariaDB ou Sqlite. Aqui estão os principais pacotes que devem ser instalados no Debian:  
+  
+    sudo apt-get install php php-common php-cli php-gd php-curl php-xml php-mbstring php-zip php-sybase php-mysql php-sqlite3
+    sudo apt-get install mariadb-server sqlite3 git
 
-## About Laravel
+O Composer é um gerenciador de dependências para PHP. Ele permite instalar, atualizar e gerenciar bibliotecas e pacotes de forma simples, garantindo que um projeto tenha todas as dependências necessárias. No Laravel, o Composer é usado para instalar o framework e suas bibliotecas.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+    curl -s https://getcomposer.org/installer | php
+    sudo mv composer.phar /usr/local/bin/composer
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Além disso, é importante configurar o banco de dados, pois ele será usado para instalar o Laravel. Vamos inicialmente criar um usuário admin com senha admin e criar um banco de dados chamado treinamento:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+    sudo mariadb
+    GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%'  IDENTIFIED BY 'admin' WITH GRANT OPTION;
+    create database treinamento;
+    quit
 
-## Learning Laravel
+O comando a seguir cria um novo projeto Laravel na pasta treinamento, baixando a estrutura básica do framework e instalando todas as dependências necessárias via Composer, garantindo que o ambiente esteja pronto para o desenvolvimento:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    composer create-project laravel/laravel treinamento
+    cd treinamento
+    php artisan serve
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+# MVC
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Uma rota é a forma como o framework define e gerencia URLs para acessar diferentes partes da aplicação. As rotas são configuradas no arquivo routes/web.php (para páginas web) ou routes/api.php (para APIs) e determinam qual código será executado quando um usuário acessa uma URL específica. Exemplo:
 
-## Laravel Sponsors
+    Route::get('/exemplo-de-rota', function () {
+    echo "Uma rota sem controller, not good!";
+    });
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+O controller é uma classe responsável por organizar a lógica da aplicação, separando as regras de negócio das rotas. Em vez de definir toda a lógica diretamente nas rotas, os controllers agrupam funcionalidades relacionadas, tornando o código mais limpo e modular. A convenção de nomenclatura para controllers segue o padrão PascalCase, onde o nome deve ser descritivo, no singular e sempre terminar com “Controller”, como ProdutoController ou UsuarioController. Vamos criar o EstagiarioController com o seguinte comando que gera automaticamente o arquivo correspondente dentro de app/Http/Controllers:
 
-### Premium Partners
+    php artisan make:controller EstagiarioController
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+A seguir criamos a rota estagiarios e a apontamos para o controller EstagiarioController, importando anteriormente o namespace App\Http\Controllers\EstagiarioController. O namespace é uma forma de organizar classes, funções e constantes para evitar conflitos de nomes em projetos grandes. Ele permite agrupar elementos relacionados dentro de um mesmo escopo, facilitando a reutilização e manutenção do código.
 
-## Contributing
+    use App\Http\Controllers\EstagiarioController;
+    Route::get('/estagiarios', [EstagiarioController::class,'index']);
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+A camada View é responsável por exibir a interface da aplicação, separando a lógica de apresentação da lógica de negócio (controller). Ela utiliza o Blade, uma linguagem de templates que permite criar páginas dinâmicas de forma eficiente. As views ficam armazenadas na pasta resources/views e podem ser retornadas a partir de um controller usando return view('nome_da_view').
 
-## Code of Conduct
+    mkdir resources/views/estagiarios
+    touch resources/views/estagiarios/index.blade.php
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+No controller:
 
-## Security Vulnerabilities
+    public function index()
+    {
+        return view('estagiarios.index');
+    }
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Conteúdo mínimo de index.blade.php:
 
-## License
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <title>Estagiários</title>
+    </head>
+        <body>
+            João<br>
+            Maria
+        </body>
+    </html>
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+O Model é uma representação de uma tabela no banco de dados e é responsável pela interação com os dados dessa tabela. Ele encapsula a lógica de acesso e manipulação dos dados, permitindo realizar operações como inserção, atualização, exclusão e leitura de registros de forma simples e intuitiva. O Laravel usa o Eloquent ORM (Object-Relational Mapping) para mapear os dados do banco de dados para objetos PHP, o que permite que você trabalhe com as tabelas como se fosse uma classe de objetos.
+
+Criando o model chamado Estagiario:
+
+    php artisan make:model Estagiario -m
+
+As migrations são uma forma de versionar e gerenciar o esquema do banco de dados, permitindo criar, alterar e remover tabelas de forma controlada e rastreável. Elas funcionam como um histórico de mudanças no banco de dados, ajudando a manter o controle de versões entre diferentes ambientes de desenvolvimento e produção.
+
+Cada migration é uma classe PHP que define as operações a serem realizadas no banco de dados. As migrations são armazenadas na pasta database/migrations. As migrations tornam o processo de gerenciamento do banco de dados mais organizado e flexível, principalmente em projetos com múltiplos desenvolvedores. Vamos colocar três colunas para o model Estagiario: nome, idade e email.
+
+    $table->string('nome');
+    $table->string('email');
+    $table->integer('idade');
+
+# Desafio
+
+   Crie uma rota chamada estagiarios/create apontando para o método create em EstagiarioController, que também deve ser criado.  
+
+No método create do EstagiarioController, insira os estagiários:
+
+    public function create(){
+        $estagiario1 = new \App\Models\Estagiario;
+        $estagiario1->nome = "João";
+        $estagiario1->email = "joao@usp.br";
+        $estagiario1->idade = 26;
+        $estagiario1->save();
+
+        $estagiario2 = new \App\Models\Estagiario;
+        $estagiario2->nome = "Maria";
+        $estagiario2->email = "maria@usp.br";
+        $estagiario2->idade = 27;
+        $estagiario2->save();
+        return redirect("/estagiarios");
+    }
+
+**Dica**  
+
+Toda vez que a rota estagiarios/create for acessada os cadastros serão realizados, pode-se deletar tudo antes das inserções com a função: App\Models\Estagiario::truncate()  
+
+Por fim, na view da index podemos buscar os estagiários cadastrados e passar como uma variável para o template:
+
+    public function index(){
+        return view('estagiarios.index'[
+            'estagiarios' => App\Models\Estagiario::all()
+        ]);
+    }
+
+No blade, listamos os estagiários:
+
+
+    <ul>
+        @foreach($estagiarios as $estagiario)
+            <li>{{ $estagiario->nome }} - {{ $estagiario->email }} - {{ $estagiario->idade }} anos</li>
+        @endforeach
+    </ul>
+
+# Exercício 1 - Importação de Dados e Estatísticas com Laravel
+
+Objetivo: Criar um sistema básico em Laravel para importar dados de um arquivo CSV e exibir estatísticas desses dados em uma view.  
+
+https://raw.githubusercontent.com/mwaskom/seaborn-data/master/exercise.csv  
+
+1) Criar o Model e a Migration:
+
+    Crie um model chamado Exercise com uma migration correspondente.
+    Na migration, defina os campos necessários com base nas colunas do arquivo exercise.csv
+    Execute a migration para criar a tabela no banco de dados.
+
+2) Criar o Controller e a Rota para Importação
+
+    Crie um controller chamado ExerciseController com o método importCsv.
+    Defina uma rota exercises/importcsv que aponte para o método importCsv do controller.
+    No método importCsv, implemente a lógica para ler o arquivo exercise.csv e salvar os dados no banco de dados usando o model Exercise.
+
+Dica: Você pode usar a classe League\Csv\Reader (disponível via Composer) para facilitar a leitura do CSV.  
+
+3) Criar a Rota e Método para Estatísticas
+
+    No mesmo ExerciseController, crie um método chamado stats.
+    Defina uma rota exercises/stats que aponte para o método stats.
+    No método stats, calcule as média da coluna pulse para os casos rests, walking e running, conforme tabela abaixo.
+    Passe esses dados para uma view chamada resources/views/exercises/stats.blade.php e monte finalmente a tabela com html.
+
+Exemplo de saída:  
+
+|exercise.csv	|rest	|walking|running|
+|---------------|-------|-------|-------|
+|Qtde linhas	| XX	|   XX  |  XXX  |
+|Média Pulse	| XX	| XX	|  XXX  |
