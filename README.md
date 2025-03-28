@@ -107,7 +107,7 @@ Toda vez que a rota estagiarios/create for acessada os cadastros serão realizad
 Por fim, na view da index podemos buscar os estagiários cadastrados e passar como uma variável para o template:
 
     public function index(){
-        return view('estagiarios.index'[
+        return view('estagiarios.index', [
             'estagiarios' => App\Models\Estagiario::all()
         ]);
     }
