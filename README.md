@@ -286,25 +286,25 @@ Exemplo de saída:
    
    **Pontos-chave do método importCsv():**  
   
-    ´->get()´ - Executa a query e retorna uma Collection (lista de resultados)  
+    ´´->get()´´ - Executa a query e retorna uma Collection (lista de resultados)  
   
-    ´->count()´ - Método da Collection que conta quantos itens existem  
+    ´´->count()´´ - Método da Collection que conta quantos itens existem  
   
-    ´->avg('coluna')´ - Calcula a média dos valores na coluna especificada  
+    ´´->avg('coluna')´´ - Calcula a média dos valores na coluna especificada  
   
-    ´compact('data')´ - Equivalente a ['data' => $data]
+    ´´compact('data')´´ - Equivalente a ['data' => $data]
 
     **Pontos-chave do método stats:**  
   
-     ´->get()´ - Executa a query e retorna uma Collection (lista de resultados filtrados)  
+     ´´->get()´´ - Executa a query e retorna uma Collection (lista de resultados filtrados)  
   
-     ´->count()´ - Método da Collection que conta quantos registros existem  
+     ´´->count()´´ - Método da Collection que conta quantos registros existem  
   
-     ´->avg('pulse')´ - Calcula a média dos valores na coluna 'pulse' para cada grupo  
+     ´´->avg('pulse')´´ - Calcula a média dos valores na coluna 'pulse' para cada grupo  
   
-     ´view()´ - Retorna a view especificada com os dados processados  
+     ´´view()´´ - Retorna a view especificada com os dados processados  
   
-    ´compact('data')´ - Passa a variável $data para a view de forma simplificada  
+    ´´compact('data')´´ - Passa a variável $data para a view de forma simplificada  
 
 7. Configurar as Rotas  
 
